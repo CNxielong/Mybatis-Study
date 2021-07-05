@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.dao.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jd.pojo.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pwd" property="pwd"/>
+    </resultMap>
+
+<!--        <select id="getUserList" resultType ="User">-->
+<!--    <select id="getUserList" resultType="com.jd.pojo.User"> -->
+    <select id="getUserList" resultType ="user">
+        select * from user
+    </select>
+
+    <!--上面BaseResultMap会报错-->
+    <!--    <insert id="insertUser" parameterMap="BaseResultMap">-->
+    <insert id="insertUser" parameterType="com.jd.pojo.User">
+        insert  into user (id,name,pwd) values(#{id},#{name},#{pwd})
+    </insert>
+
+    <insert id="insertUserByMap" parameterType="Map">
+        insert  into user (id,name,pwd) values(#{id},#{name},#{pwd})
+    </insert>
+
+    <update id="updateUserById" parameterType="com.jd.pojo.User">
+        update user set name=#{name},pwd=#{pwd} where id=#{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="INT">
+        DELETE FROM user where id=#{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.dao.BlogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jd.pojo.Blog">
+        <result column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="author" property="author" />
+        <result column="create_time" property="createTime" />
+        <result column="views" property="views" />
+    </resultMap>
+
+    <insert id="addBlog" parameterType="blog">
+        insert into blog (id, title, author, create_time, views)
+        values (#{id},#{title},#{author},#{createTime},#{views});
+    </insert>
+
+    <select id="findActiveBlogWithTitleLike" resultType="Blog">
+        SELECT * FROM BLOG
+        WHERE 1 = 1
+        <if test="title != null">
+            AND title like #{title}
+        </if>
+    </select>
+
+    <select id="queryBlogChoose" parameterType="java.util.Map" resultType="Blog">
+        SELECT * FROM BLOG WHERE 1 = 1
+        <choose>
+            <when test="title != null">
+                AND title like "%"#{title,jdbcType=VARCHAR}"%"
+            </when>
+            <when test="author != null">
+                AND author like #{author}
+            </when>
+            <otherwise>
+                AND featured = 1
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="queryBlogIf" parameterType="java.util.Map" resultType="Blog">
+        SELECT * FROM BLOG WHERE 1 = 1
+        <if test="title != null">
+            AND title like "%"#{title,jdbcType=VARCHAR}"%"
+        </if>
+        <if test="author != null">
+            AND author like  concat('%','${author}','%')
+        </if>
+    </select>
+
+
+    <select id="queryBlogForeach" parameterType="map" resultType="blog">
+        select * from blog
+        <where>
+            <!--
+            collection:指定输入对象中的集合属性
+            item:每次遍历生成的对象
+            open:开始遍历时的拼接字符串
+            close:结束时拼接的字符串
+            separator:遍历对象之间需要拼接的字符串
+            select * from blog where 1=1 and (id=1 or id=2 or id=3)
+            -->
+            1=1
+            <foreach collection="ids" item="id" open="and("  close=")" separator="or">
+                id = #{id}
+            </foreach>
+        </where>
+    </select>
+
+</mapper>

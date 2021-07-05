@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.dao.TeacherMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jd.pojo.Teacher">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <resultMap id="TeacherStudent" type="Teacher">
+        <result property="name" column="tname"></result>
+        <collection property="studentList" ofType="Student">
+            <result property="id" column="sid"/>
+            <result property="name" column="sname"/>
+            <result property="tid" column="tid"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="TeacherStudent2" type="Teacher">
+        <collection property="studentList" javaType="List" ofType="Student"
+        column="id" select="getStudentByTeacherId"></collection>
+    </resultMap>
+
+<!--        <select id="getUserList" resultType ="Teacher">-->
+<!--    <select id="getUserList" resultType="com.jd.pojo.Teacher"> -->
+    <select id="listTeacherList" resultType ="Teacher">
+        select * from Teacher
+    </select>
+
+    <delete id="deleteTeacherById" parameterType="INT">
+        DELETE FROM Teacher where id=#{id}
+    </delete>
+
+    <select id="getTeacher" resultMap="TeacherStudent">
+        select s.id sid, s.name sname , t.name tname, t.id tid
+        from student s,teacher t
+        where s.tid = t.id and t.id=#{id}
+    </select>
+
+    <select id="getStudentByTeacherId" resultType="Student">
+        select * from student where tid = #{id}
+    </select>
+
+</mapper>
